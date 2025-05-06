@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>نظام إدارة نقط التلاميذ</title>
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .app-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .app-header img {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 10px;
+        }
+        .app-header h1 {
+            color: #2196F3;
+            font-weight: bold;
+            margin: 0;
+            font-size: 24px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, button {
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .grades-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            table-layout: fixed;
+        }
+        .grades-table th, .grades-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        .grades-table th {
+            background-color: #f5f5f5;
+        }
+        .grades-table .grade-column {
+            width: 60px;
+        }
+        .grades-table .name-column {
+            width: 200px;
+        }
+        .grades-table .average-column {
+            width: 100px;
+        }
+        .grades-table .comment-column {
+            width: 120px;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+        }
+        #activitiesSection {
+            transition: opacity 0.3s;
+        }
+        #activitiesSection.hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="app-header">
+            <img src="data/icon.png" alt="أيقونة التطبيق">
+            <h1>نظام إدارة نقط التلاميذ</h1>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="includeActivities" checked onchange="toggleActivities()">
+            <label for="includeActivities">تضمين نقطة الأنشطة</label>
+        </div>
+        
+        <div id="activitiesSection">
+            <div class="form-group">
+                <label>وزن الأنشطة (%):</label>
+                <input type="number" id="activitiesWeight" min="0" max="100" value="25" onchange="updateWeights()">
+                <span>وزن الفروض: <span id="assignmentsWeight">75</span>%</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>عدد الفروض:</label>
+            <input type="number" id="assignmentsCount" min="1" max="6" value="3" onchange="updateGradeColumns()">
+        </div>
+
+        <div class="form-group">
+            <label>مستويات التقييم:</label>
+            <div id="levels">
+                <table class="grades-table">
+                    <tr>
+                        <th>الحد الأدنى</th>
+                        <th>الحد الأقصى</th>
+                        <th>الملاحظة</th>
+                    </tr>
+                    <tr>
+                        <td><input type="number" value="0" step="0.25"></td>
+                        <td><input type="number" value="10" step="0.25"></td>
+                        <td><input type="text" value="ضعيف"></td>
+                    </tr>
+                    <tr>
+                        <td><input type="number" value="10" step="0.25"></td>
+                        <td><input type="number" value="12" step="0.25"></td>
+                        <td><input type="text" value="متوسط"></td>
+                    </tr>
+                    <tr>
+                        <td><input type="number" value="12" step="0.25"></td>
+                        <td><input type="number" value="14" step="0.25"></td>
+                        <td><input type="text" value="مستحسن"></td>
+                    </tr>
+                    <tr>
+                        <td><input type="number" value="14" step="0.25"></td>
+                        <td><input type="number" value="20" step="0.25"></td>
+                        <td><input type="text" value="جيد"></td>
+                    </tr>
+                </table>
+                <button onclick="addLevel()">إضافة مستوى جديد</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>اختر ملف Excel:</label>
+            <input type="file" id="fileInput" accept=".xlsx,.xls" onchange="handleFileSelect()">
+        </div>
+
+        <div class="preview-section">
+            <table id="gradesTable" class="grades-table">
+                <thead>
+                    <tr id="headerRow">
+                        <th class="name-column">الاسم الكامل</th>
+                        <!-- سيتم إضافة أعمدة الفروض هنا -->
+                        <th class="average-column">المعدل العام</th>
+                        <th class="comment-column">الملاحظات</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="button-group">
+            <button onclick="copyComments()">نسخ الملاحظات</button>
+            <button onclick="exportToExcel()">تصدير Excel</button>
+            <button onclick="exportToPDF()">تصدير PDF</button>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        let workbook, worksheet;
+        const STARTING_ROW = 11;
+        const COLUMNS = {
+            NAME_1: 'D',
+            NAME_2: 'E',
+            ASSIGNMENTS: ['G', 'I', 'K', 'M', 'O', 'Q'],
+            ACTIVITIES: 'M'
+        };
+
+        function toggleActivities() {
+            const includeActivities = document.getElementById('includeActivities').checked;
+            const activitiesSection = document.getElementById('activitiesSection');
+            
+            if (includeActivities) {
+                activitiesSection.classList.remove('hidden');
+            } else {
+                activitiesSection.classList.add('hidden');
+            }
+            
+            updateGradeColumns();
+        }
+
+        function updateWeights() {
+            const activitiesWeight = document.getElementById('activitiesWeight').value;
+            document.getElementById('assignmentsWeight').textContent = 100 - activitiesWeight;
+        }
+
+        function addLevel() {
+            const table = document.querySelector('#levels table tbody');
+            const newRow = table.insertRow();
+            newRow.innerHTML = `
+                <td><input type="number" step="0.25"></td>
+                <td><input type="number" step="0.25"></td>
+                <td><input type="text"></td>
+            `;
+        }
+
+        function updateGradeColumns() {
+            const count = parseInt(document.getElementById('assignmentsCount').value);
+            const includeActivities = document.getElementById('includeActivities').checked;
+            const headerRow = document.getElementById('headerRow');
+            
+            // إعادة تعيين الصف
+            headerRow.innerHTML = '<th class="name-column">الاسم الكامل</th>';
+            
+            // إضافة عمود الأنشطة إذا كان مفعلاً
+            if (includeActivities) {
+                const activityTh = document.createElement('th');
+                activityTh.className = 'grade-column';
+                activityTh.textContent = 'نقطة الأنشطة';
+                headerRow.appendChild(activityTh);
+            }
+            
+            // إضافة أعمدة الفروض
+            for (let i = 0; i < count; i++) {
+                const th = document.createElement('th');
+                th.className = 'grade-column';
+                th.textContent = `فرض ${i + 1}`;
+                headerRow.appendChild(th);
+            }
+            
+            // إضافة عمودي المعدل والملاحظات
+            headerRow.innerHTML += `
+                <th class="average-column">المعدل العام</th>
+                <th class="comment-column">الملاحظات</th>
+            `;
+
+            if (worksheet) {
+                displayGrades();
+            }
+        }
+
+        function handleFileSelect() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                workbook = XLSX.read(data, {type: 'array'});
+                worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                displayGrades();
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function getComment(average) {
+            const levels = document.querySelectorAll('#levels table tr:not(:first-child)');
+            for (let level of levels) {
+                const inputs = level.querySelectorAll('input');
+                const min = parseFloat(inputs[0].value);
+                const max = parseFloat(inputs[1].value);
+                const comment = inputs[2].value;
+                if (average >= min && average <= max) {
+                    return comment;
+                }
+            }
+            return '';
+        }
+
+        function displayGrades() {
+            if (!worksheet) return;
+
+            const assignmentsCount = parseInt(document.getElementById('assignmentsCount').value);
+            const includeActivities = document.getElementById('includeActivities').checked;
+            const activitiesWeight = includeActivities ? document.getElementById('activitiesWeight').value / 100 : 0;
+            const assignmentsWeight = includeActivities ? 1 - activitiesWeight : 1;
+            const tableBody = document.querySelector('#gradesTable tbody');
+            tableBody.innerHTML = '';
+
+            const data = XLSX.utils.sheet_to_json(worksheet, {header: 'A'});
+            
+            for (let i = STARTING_ROW; i < data.length; i++) {
+                const row = data[i];
+                if (!row['D']) continue;
+
+                const tr = document.createElement('tr');
+                
+                // الاسم الكامل
+                tr.innerHTML = `<td class="name-column">${row['D']} ${row['E'] || ''}</td>`;
+                
+                // نقطة الأنشطة
+                if (includeActivities) {
+                    const activitiesScore = parseFloat(row[COLUMNS.ACTIVITIES]) || 0;
+                    tr.innerHTML += `<td class="grade-column">${activitiesScore}</td>`;
+                }
+
+                // الفروض
+                let assignmentsSum = 0;
+                for (let j = 0; j < assignmentsCount; j++) {
+                    const grade = parseFloat(row[COLUMNS.ASSIGNMENTS[j]]) || 0;
+                    assignmentsSum += grade;
+                    tr.innerHTML += `<td class="grade-column">${grade}</td>`;
+                }
+                
+                // المعدل والملاحظة
+                const assignmentsAvg = assignmentsSum / assignmentsCount;
+                const finalAverage = includeActivities ? 
+                    (assignmentsAvg * assignmentsWeight) + (parseFloat(row[COLUMNS.ACTIVITIES]) * activitiesWeight) :
+                    assignmentsAvg;
+                
+                tr.innerHTML += `
+                    <td class="average-column">${finalAverage.toFixed(2)}</td>
+                    <td class="comment-column">${getComment(finalAverage)}</td>
+                `;
+                
+                tableBody.appendChild(tr);
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 3000);
+        }
+
+        function copyComments() {
+            const comments = [];
+            const rows = document.querySelectorAll('#gradesTable tbody tr');
+            rows.forEach(row => {
+                const comment = row.querySelector('td:last-child').textContent;
+                comments.push(comment);
+            });
+            
+            navigator.clipboard.writeText(comments.join('\n')).then(() => {
+                const firstStudent = document.querySelector('#gradesTable tbody tr td').textContent;
+                showToast(`تم نسخ الملاحظات بنجاح. يمكنك لصقها في الملف بدءاً من خانة التلميذ: ${firstStudent}`);
+            });
+        }
+
+        function exportToExcel() {
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.table_to_sheet(document.getElementById('gradesTable'));
+            XLSX.utils.book_append_sheet(wb, ws, "النتائج");
+            XLSX.writeFile(wb, 'نتائج_التلاميذ.xlsx');
+        }
+
+        async function exportToPDF() {
+            const table = document.getElementById('gradesTable');
+            const canvas = await html2canvas(table);
+            const imgData = canvas.toDataURL('image/png');
+            
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({
+                orientation: 'landscape',
+                unit: 'mm',
+                format: 'a4'
+            });
+            
+            const imgWidth = doc.internal.pageSize.getWidth();
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            
+            doc.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+            doc.save('نتائج_التلاميذ.pdf');
+        }
+
+        // تهيئة الصفحة
+        updateGradeColumns();
+    </script>
+</body>
+</html>

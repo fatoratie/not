@@ -1,7 +1,9 @@
+<p>&nbsp;</p><div class="separator" style="clear: both; text-align: center;"><a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEilk5VsWLuyVi72hEV2kTO5SLaDhTZXbuZlBSL2aoH7POU6TtpJLdUrcdS3T-0fG6fLjhd6wHXgby4LY8lzjcSRXnKCvKwrLyMHT1y-ix6GdA9EtnSuWPv8Z1tFNj4GO4N3Dxx-j5Q1vwHY6sPW2fg_D6-PSxBT5lJR33VZ05JTlAWXd_LxjLUhyphenhyphenwvDmA/s512/icon.png" style="margin-left: 1em; margin-right: 1em;"><img border="0" data-original-height="512" data-original-width="512" height="81" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEilk5VsWLuyVi72hEV2kTO5SLaDhTZXbuZlBSL2aoH7POU6TtpJLdUrcdS3T-0fG6fLjhd6wHXgby4LY8lzjcSRXnKCvKwrLyMHT1y-ix6GdA9EtnSuWPv8Z1tFNj4GO4N3Dxx-j5Q1vwHY6sPW2fg_D6-PSxBT5lJR33VZ05JTlAWXd_LxjLUhyphenhyphenwvDmA/w81-h81/icon.png" width="81" /></a></div>
 <!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نظام إدارة نقط التلاميذ</title>
     <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -9,46 +11,95 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
         }
+        
+        .header {
+            background: linear-gradient(135deg, #0066cc 0%, #002060 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            background: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            font-size: 24px;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .header-icon:hover {
+            background: #222;
+            transform: scale(1.1);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .header-title {
+            flex: 1;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .app-icon-wrapper {
+            width: 45px;
+            height: 45px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .app-icon {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+        
         .container {
             max-width: 1200px;
-            margin: 0 auto;
+            margin: 20px auto;
             background-color: white;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
         }
-        .app-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .app-header img {
-            width: 64px;
-            height: 64px;
-            margin-bottom: 10px;
-        }
-        .app-header h1 {
-            color: #2196F3;
-            font-weight: bold;
-            margin: 0;
-            font-size: 24px;
-        }
+        
         .form-group {
             margin-bottom: 15px;
         }
+        
         label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
         }
+        
         input, button {
             padding: 8px;
             margin: 5px 0;
             border-radius: 4px;
             border: 1px solid #ddd;
         }
+        
         button {
             background-color: #4CAF50;
             color: white;
@@ -56,42 +107,56 @@
             padding: 10px 20px;
             cursor: pointer;
             margin: 5px;
-            transition: background-color 0.3s;
+            transition: all 0.3s ease;
         }
+        
         button:hover {
             background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
+        
         .grades-table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
             table-layout: fixed;
         }
+        
         .grades-table th, .grades-table td {
             border: 1px solid #ddd;
             padding: 8px;
             text-align: center;
         }
+        
         .grades-table th {
-            background-color: #f5f5f5;
+            background-color: #0066cc;
+            color: white;
         }
+        
         .grades-table .grade-column {
             width: 60px;
         }
+        
         .grades-table .name-column {
             width: 200px;
         }
+        
         .grades-table .average-column {
             width: 100px;
         }
+        
         .grades-table .comment-column {
             width: 120px;
         }
+        
         .button-group {
             display: flex;
             gap: 10px;
             margin-top: 20px;
+            flex-wrap: wrap;
         }
+        
         .toast {
             position: fixed;
             top: 20px;
@@ -104,31 +169,110 @@
             z-index: 1000;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
+        
         .checkbox-group {
             display: flex;
             align-items: center;
             gap: 10px;
             margin-bottom: 15px;
         }
+        
         .checkbox-group input[type="checkbox"] {
             width: 20px;
             height: 20px;
+            accent-color: #0066cc;
+            cursor: pointer;
         }
+        
         #activitiesSection {
             transition: opacity 0.3s;
         }
+        
         #activitiesSection.hidden {
             display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 12px 15px;
+            }
+            
+            .header-title {
+                font-size: 16px;
+            }
+            
+            .header-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 20px;
+            }
+            
+            .app-icon-wrapper {
+                width: 38px;
+                height: 38px;
+            }
+            
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+            
+            .grades-table {
+                font-size: 12px;
+            }
+            
+            .grades-table th, .grades-table td {
+                padding: 5px;
+            }
+            
+            button {
+                padding: 8px 15px;
+                font-size: 14px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header-title {
+                font-size: 14px;
+            }
+            
+            .header-icon {
+                width: 30px;
+                height: 30px;
+                font-size: 18px;
+            }
+            
+            .app-icon-wrapper {
+                width: 33px;
+                height: 33px;
+            }
+            
+            .grades-table {
+                font-size: 11px;
+            }
+            
+            .grades-table .name-column {
+                width: 150px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="app-header">
-            <img src="data/icon.png" alt="أيقونة التطبيق">
-            <h1>نظام إدارة نقط التلاميذ</h1>
+    <div class="header">
+        <div class="header-icon" onclick="goToHome()" title="الرئيسية">
+            ←
         </div>
+        <div class="header-title">دفتر التنقيط - النموذج الأول</div>
+        <div class="app-icon-wrapper">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEilk5VsWLuyVi72hEV2kTO5SLaDhTZXbuZlBSL2aoH7POU6TtpJLdUrcdS3T-0fG6fLjhd6wHXgby4LY8lzjcSRXnKCvKwrLyMHT1y-ix6GdA9EtnSuWPv8Z1tFNj4GO4N3Dxx-j5Q1vwHY6sPW2fg_D6-PSxBT5lJR33VZ05JTlAWXd_LxjLUhyphenhyphenwvDmA/w81-h81/icon.png" alt="دفتر النقيط" class="app-icon" onerror="this.style.display='none'; this.parentElement.innerHTML='📊'">
+        </div>
+    </div>
 
+    <div class="container">
         <div class="checkbox-group">
             <input type="checkbox" id="includeActivities" checked onchange="toggleActivities()">
             <label for="includeActivities">تضمين نقطة الأنشطة</label>
@@ -218,6 +362,10 @@
             ASSIGNMENTS: ['G', 'I', 'K', 'M', 'O', 'Q'],
             ACTIVITIES: 'M'
         };
+
+        function goToHome() {
+            window.history.back();
+        }
 
         function toggleActivities() {
             const includeActivities = document.getElementById('includeActivities').checked;
@@ -413,3 +561,600 @@
     </script>
 </body>
 </html>
+
+<p>&nbsp;</p><div class="separator" style="clear: both; text-align: center;"><a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEilk5VsWLuyVi72hEV2kTO5SLaDhTZXbuZlBSL2aoH7POU6TtpJLdUrcdS3T-0fG6fLjhd6wHXgby4LY8lzjcSRXnKCvKwrLyMHT1y-ix6GdA9EtnSuWPv8Z1tFNj4GO4N3Dxx-j5Q1vwHY6sPW2fg_D6-PSxBT5lJR33VZ05JTlAWXd_LxjLUhyphenhyphenwvDmA/s512/icon.png" style="margin-left: 1em; margin-right: 1em;"><img border="0" data-original-height="512" data-original-width="512" height="81" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEilk5VsWLuyVi72hEV2kTO5SLaDhTZXbuZlBSL2aoH7POU6TtpJLdUrcdS3T-0fG6fLjhd6wHXgby4LY8lzjcSRXnKCvKwrLyMHT1y-ix6GdA9EtnSuWPv8Z1tFNj4GO4N3Dxx-j5Q1vwHY6sPW2fg_D6-PSxBT5lJR33VZ05JTlAWXd_LxjLUhyphenhyphenwvDmA/w81-h81/icon.png" width="81" /></a></div>
+
+
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دفتر التنقيط</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0066cc 0%, #002060 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            background: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            font-size: 24px;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .header-icon:hover {
+            background: #222;
+            transform: scale(1.1);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .header-title {
+            flex: 1;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .app-icon-wrapper {
+            width: 45px;
+            height: 45px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .app-icon {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        
+        th {
+            background-color: #0066cc;
+            color: white;
+        }
+        
+        input[type="number"] {
+            width: 80px;
+        }
+        
+        .student-name {
+            width: 200px;
+        }
+        
+        .saved-classes {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f8f8;
+            border-radius: 4px;
+        }
+        
+        .saved-class-item {
+            padding: 10px;
+            margin: 5px 0;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .delete-btn {
+            background-color: #ff4444;
+        }
+        
+        .delete-btn:hover {
+            background-color: #cc0000;
+        }
+        
+        input[type="checkbox"] {
+            width: 25px;
+            height: 25px;
+            accent-color: blue;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 12px 15px;
+            }
+            
+            .header-title {
+                font-size: 16px;
+            }
+            
+            .header-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 20px;
+            }
+            
+            .app-icon-wrapper {
+                width: 38px;
+                height: 38px;
+            }
+            
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            input[type="number"] {
+                width: 60px;
+            }
+            
+            button {
+                padding: 8px 15px;
+                font-size: 14px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header-title {
+                font-size: 14px;
+            }
+            
+            .header-icon {
+                width: 30px;
+                height: 30px;
+                font-size: 18px;
+            }
+            
+            .app-icon-wrapper {
+                width: 33px;
+                height: 33px;
+            }
+            
+            table {
+                font-size: 11px;
+            }
+            
+            th, td {
+                padding: 5px;
+            }
+            
+            input[type="number"] {
+                width: 50px;
+                padding: 5px;
+            }
+            
+            .student-name {
+                width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-icon" onclick="goToHome()" title="الرئيسية">
+            ←
+        </div>
+        <div class="header-title">دفتر التنقيط - النموذج الثاني</div>
+        <div class="app-icon-wrapper">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEilk5VsWLuyVi72hEV2kTO5SLaDhTZXbuZlBSL2aoH7POU6TtpJLdUrcdS3T-0fG6fLjhd6wHXgby4LY8lzjcSRXnKCvKwrLyMHT1y-ix6GdA9EtnSuWPv8Z1tFNj4GO4N3Dxx-j5Q1vwHY6sPW2fg_D6-PSxBT5lJR33VZ05JTlAWXd_LxjLUhyphenhyphenwvDmA/w81-h81/icon.png" alt="دفتر النقيط" class="app-icon" onerror="this.style.display='none'; this.parentElement.innerHTML='📊'">
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Saved Classes Section -->
+        <div id="saved-classes" class="saved-classes">
+            <h3>الأقسام المحفوظة</h3>
+            <div id="saved-classes-list"></div>
+        </div>
+
+        <div id="setup-form">
+            <div class="form-group">
+                <label for="subject">المادة:</label>
+                <input type="text" id="subject" required>
+            </div>
+            <div class="form-group">
+                <label for="level">المستوى:</label>
+                <input type="text" id="level" required>
+            </div>
+            <div class="form-group">
+                <label for="class">القسم:</label>
+                <input type="text" id="class" required>
+            </div>
+            <div class="form-group">
+                <label for="examCount">عدد الفروض:</label>
+                <input type="number" id="examCount" min="1" required>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="includeActivities" onchange="toggleActivityWeight()">
+                    <span>إضافة نقطة الأنشطة</span>
+                </label>
+            </div>
+            <div class="form-group hidden" id="activityWeightGroup">
+                <label for="activityWeight">وزن الأنشطة (%):</label>
+                <input type="number" id="activityWeight" min="0" max="100" value="30">
+            </div>
+            <button onclick="createGradeBook()">إنشاء</button>
+        </div>
+
+        <div id="grade-book" class="hidden">
+            <h2 id="header-info"></h2>
+            <div id="table-container"></div>
+            <div style="margin-top: 20px">
+                <button onclick="saveClass()">حفظ القسم</button>
+                <button onclick="exportToExcel()">تصدير</button>
+                <button onclick="goBack()">رجوع</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script>
+        function goToHome() {
+            window.history.back();
+        }
+
+        function toggleActivityWeight() {
+            const includeActivities = document.getElementById('includeActivities').checked;
+            const activityWeightGroup = document.getElementById('activityWeightGroup');
+            activityWeightGroup.classList.toggle('hidden', !includeActivities);
+        }
+
+        function saveClass() {
+            const subject = document.getElementById('subject').value;
+            const level = document.getElementById('level').value;
+            const className = document.getElementById('class').value;
+            const examCount = parseInt(document.getElementById('examCount').value);
+            const includeActivities = document.getElementById('includeActivities').checked;
+            const activityWeight = document.getElementById('activityWeight').value;
+
+            const students = [];
+            const rows = document.querySelectorAll('table tr:not(:first-child)');
+            
+            rows.forEach(row => {
+                const nameInput = row.querySelector('.student-name');
+                if (nameInput && nameInput.value.trim()) {
+                    const grades = Array.from(row.getElementsByClassName('grade'))
+                        .map(input => parseFloat(input.value) || null);
+                    
+                    const activityInput = row.querySelector('.activity');
+                    const activity = activityInput ? parseFloat(activityInput.value) || null : null;
+                    
+                    const average = parseFloat(row.querySelector('.average').textContent) || null;
+
+                    students.push({
+                        name: nameInput.value.trim(),
+                        grades: grades,
+                        activity: activity,
+                        average: average
+                    });
+                }
+            });
+
+            const classData = {
+                subject,
+                level,
+                className,
+                examCount,
+                includeActivities,
+                activityWeight,
+                students,
+                timestamp: new Date().toISOString()
+            };
+
+            const savedClasses = JSON.parse(localStorage.getItem('savedClasses') || '[]');
+            savedClasses.push(classData);
+            localStorage.setItem('savedClasses', JSON.stringify(savedClasses));
+            
+            alert('تم حفظ القسم بنجاح');
+            loadSavedClasses();
+        }
+
+        function loadSavedClasses() {
+            const savedClasses = JSON.parse(localStorage.getItem('savedClasses') || '[]');
+            const container = document.getElementById('saved-classes-list');
+            
+            if (savedClasses.length === 0) {
+                container.innerHTML = '<p>لا توجد أقسام محفوظة</p>';
+                return;
+            }
+
+            let html = '';
+            savedClasses.forEach((classData, index) => {
+                const date = new Date(classData.timestamp).toLocaleDateString('ar-MA');
+                html += `
+                    <div class="saved-class-item">
+                        <div>
+                            <strong>${classData.subject} - ${classData.level} - ${classData.className}</strong>
+                            <br>
+                            <small>تاريخ الحفظ: ${date}</small>
+                        </div>
+                        <div>
+                            <button onclick="loadClass(${index})">تحميل</button>
+                            <button class="delete-btn" onclick="deleteClass(${index})">حذف</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function deleteClass(index) {
+            if (confirm('هل أنت متأكد من حذف هذا القسم؟')) {
+                const savedClasses = JSON.parse(localStorage.getItem('savedClasses') || '[]');
+                savedClasses.splice(index, 1);
+                localStorage.setItem('savedClasses', JSON.stringify(savedClasses));
+                loadSavedClasses();
+            }
+        }
+
+        function loadClass(index) {
+            const savedClasses = JSON.parse(localStorage.getItem('savedClasses') || '[]');
+            const classData = savedClasses[index];
+            
+            if (!classData) {
+                alert('لم يتم العثور على البيانات المحفوظة');
+                return;
+            }
+
+            document.getElementById('subject').value = classData.subject;
+            document.getElementById('level').value = classData.level;
+            document.getElementById('class').value = classData.className;
+            document.getElementById('examCount').value = classData.examCount;
+            document.getElementById('includeActivities').checked = classData.includeActivities;
+            document.getElementById('activityWeight').value = classData.activityWeight;
+            
+            toggleActivityWeight();
+            createGradeBook(classData.students);
+        }
+
+        function createGradeBook(savedData = null) {
+            const subject = document.getElementById('subject').value;
+            const level = document.getElementById('level').value;
+            const className = document.getElementById('class').value;
+            const examCount = parseInt(document.getElementById('examCount').value);
+            const includeActivities = document.getElementById('includeActivities').checked;
+
+            if (!subject || !level || !className || !examCount) {
+                alert('الرجاء ملء جميع الحقول المطلوبة');
+                return;
+            }
+
+            document.getElementById('setup-form').classList.add('hidden');
+            document.getElementById('grade-book').classList.remove('hidden');
+            document.getElementById('header-info').textContent = 
+                `المادة: ${subject} | المستوى: ${level} | القسم: ${className}`;
+
+            createTable(examCount, includeActivities, savedData);
+        }
+
+        function createTable(examCount, includeActivities, savedData = null) {
+            let html = '<table>';
+            
+            // Header row
+            html += '<tr><th>الرقم</th><th>اسم التلميذ</th>';
+            for (let i = 1; i <= examCount; i++) {
+                html += `<th>فرض ${i}</th>`;
+            }
+            if (includeActivities) {
+                html += '<th>الأنشطة</th>';
+            }
+            html += '<th>المعدل</th></tr>';
+            
+            const rowCount = savedData ? Math.max(savedData.length + 1, 50) : 50;
+            
+            for (let i = 0; i < rowCount; i++) {
+                const studentData = savedData && savedData[i] ? savedData[i] : null;
+                
+                html += `<tr>
+                    <td>${i + 1}</td>
+                    <td><input type="text" class="student-name" value="${studentData ? studentData.name : ''}"></td>`;
+                
+                for (let j = 0; j < examCount; j++) {
+                    const grade = studentData && studentData.grades[j] !== undefined ? 
+                        studentData.grades[j] : '';
+                    html += `<td><input type="number" min="0" max="20" step="0.25" 
+                        value="${grade}"
+                        oninput="calculateAverage(this.parentElement.parentElement)" 
+                        class="grade"></td>`;
+                }
+                
+                if (includeActivities) {
+                    const activity = studentData && studentData.activity !== null ? studentData.activity : '';
+                    html += `<td><input type="number" min="0" max="20" step="0.25" 
+                        value="${activity}"
+                        oninput="calculateAverage(this.parentElement.parentElement)" 
+                        class="activity"></td>`;
+                }
+                
+                html += `<td class="average">-</td></tr>`;
+            }
+            
+            html += '</table>';
+            document.getElementById('table-container').innerHTML = html;
+
+            // Calculate initial averages
+            document.querySelectorAll('table tr:not(:first-child)').forEach(row => {
+                calculateAverage(row);
+            });
+        }
+
+        function calculateAverage(row) {
+            const grades = Array.from(row.getElementsByClassName('grade'))
+                .map(input => parseFloat(input.value))
+                .filter(value => !isNaN(value));
+            
+            const activityInput = row.getElementsByClassName('activity')[0];
+            const activityWeight = document.getElementById('activityWeight');
+            const averageCell = row.getElementsByClassName('average')[0];
+            
+            if (grades.length > 0) {
+                const examsAverage = grades.reduce((sum, grade) => sum + grade, 0) / grades.length;
+                
+                let finalAverage;
+                if (activityInput && activityWeight && !isNaN(parseFloat(activityInput.value))) {
+                    const weightPercentage = parseInt(activityWeight.value) / 100;
+                    const activityGrade = parseFloat(activityInput.value);
+                    finalAverage = (examsAverage * (1 - weightPercentage)) + 
+                                 (activityGrade * weightPercentage);
+                } else {
+                    finalAverage = examsAverage;
+                }
+                
+                averageCell.textContent = finalAverage.toFixed(2);
+            } else {
+                averageCell.textContent = '-';
+            }
+        }
+
+        function goBack() {
+            document.getElementById('grade-book').classList.add('hidden');
+            document.getElementById('setup-form').classList.remove('hidden');
+        }
+
+        function exportToExcel() {
+            const subject = document.getElementById('subject').value;
+            const level = document.getElementById('level').value;
+            const className = document.getElementById('class').value;
+            
+            const wb = XLSX.utils.book_new();
+            const ws_data = [];
+            
+            // Get headers
+            const headers = ['الرقم', 'اسم التلميذ'];
+            const examCount = parseInt(document.getElementById('examCount').value);
+            for (let i = 1; i <= examCount; i++) {
+                headers.push(`فرض ${i}`);
+            }
+            if (document.getElementById('includeActivities').checked) {
+                headers.push('الأنشطة');
+            }
+            headers.push('المعدل');
+            ws_data.push(headers);
+            
+            // Get data rows
+            document.querySelectorAll('table tr:not(:first-child)').forEach((row, index) => {
+                const rowData = [index + 1];
+                const nameInput = row.querySelector('.student-name');
+                rowData.push(nameInput.value);
+                
+                row.querySelectorAll('.grade').forEach(grade => {
+                    rowData.push(grade.value || '');
+                });
+                
+                const activity = row.querySelector('.activity');
+                if (activity) {
+                    rowData.push(activity.value || '');
+                }
+                
+                rowData.push(row.querySelector('.average').textContent);
+                ws_data.push(rowData);
+            });
+            
+            const ws = XLSX.utils.aoa_to_sheet(ws_data);
+            XLSX.utils.book_append_sheet(wb, ws, "نقط التلاميذ");
+            
+            const fileName = `دفتر_التنقيط_${subject}_${level}_${className}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+        }
+
+        // Initialize page
+        window.onload = function() {
+            toggleActivityWeight();
+            loadSavedClasses();
+        };
+    </script>
+</body>
+</html>
+
